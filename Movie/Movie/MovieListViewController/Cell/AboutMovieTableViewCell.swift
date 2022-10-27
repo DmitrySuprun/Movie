@@ -19,7 +19,7 @@ final class AboutMovieTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.backgroundColor = .systemGray
         imageView.layer.cornerRadius = 20
-        imageView.layer.borderWidth = 1
+        imageView.layer.borderWidth = 2
         imageView.layer.borderColor = UIColor.systemRed.cgColor
         imageView.clipsToBounds = true
         return imageView
@@ -37,6 +37,7 @@ final class AboutMovieTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 25, weight: .bold)
         label.textAlignment = .center
+        label.textColor = .systemRed
         return label
     }()
     

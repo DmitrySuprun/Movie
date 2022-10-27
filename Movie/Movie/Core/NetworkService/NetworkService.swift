@@ -8,29 +8,38 @@
 import Foundation
 
 /// Network requests
-class NetworkService {
+final class NetworkService {
+    // MARK: - Public Methods
+    func loadPopularMovies(completion: @escaping(Results) -> ()) {
+        loadData(url: Url.popularMovies, completion: completion)
+    }
     
-    func loadData(completion: @escaping (Results) -> ()) {
+    func loadTopMovies(completion: @escaping(Results) -> ()) {
+        loadData(url: Url.topMovies, completion: completion)
+    }
+    
+    func loadUpComingMovies(completion: @escaping(Results) -> ()) {
+        loadData(url: Url.upComing, completion: completion)
+    }
+    
+    func loadDetailInfo(id: Int, completion: @escaping(DetailInfo) -> ()) {
+        loadData(url: "\(Url.prefixUrl)\(id)\(Url.postfixUrl)", completion: completion)
+        print("\(Url.prefixUrl)\(id)\(Url.postfixUrl)")
+    }
+    
+    // MARK: - Private Methods
+    private func loadData<T: Decodable>(url: String, completion: @escaping (T) -> ()) {
         guard let url = URL(
-            string: Url.popularMovies)
+            string: url)
         else { return }
         URLSession.shared.dataTask(with: url) { data, _, _ in
             guard let data = data else { return }
             do {
-                let model = try JSONDecoder().decode(Results.self, from: data)
+                let model = try JSONDecoder().decode(T.self, from: data)
                 completion(model)
             } catch {
                 print(error)
             }
-        }.resume()
-    }
-    
-    func loadImage(url: String, completion: @escaping(Data) -> ()) {
-        let imageURL = "https://image.tmdb.org/t/p/w500" + url
-        guard let validURL = URL(string: imageURL) else { return }
-        URLSession.shared.dataTask(with: validURL) { data, _, _ in
-            guard let data = data else { return }
-            completion(data)
         }.resume()
     }
 }

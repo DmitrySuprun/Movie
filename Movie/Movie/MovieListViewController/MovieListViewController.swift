@@ -7,18 +7,19 @@
 
 import UIKit
 
-/// Recommended movie list
-class MovieListViewController: UIViewController {
+/// Movie lists with base info
+final class MovieListViewController: UIViewController {
     // MARK: - Constants
     enum Constants {
         static let aboutMovieCellID = "AboutMovieCellID"
-        static let segmentControlItems = ["Top", "Popular", "Actual"]
+        static let segmentControlItems = ["Top", "Popular", "UpComing"]
     }
     
     // MARK: - Private Visual Components
-    private let movieSegmentControl = {
+    private lazy var movieSegmentControl = {
         let segmentControl = UISegmentedControl(items: Constants.segmentControlItems)
-        segmentControl.frame = CGRect(x: 0, y: 50, width: 393, height: 50)
+        segmentControl.selectedSegmentIndex = 0
+        segmentControl.addTarget(self, action: #selector(movieSegmentControlAction(_:)), for: .valueChanged)
         return segmentControl
     }()
     
@@ -26,6 +27,34 @@ class MovieListViewController: UIViewController {
         let tableView = UITableView()
         return tableView
     }()
+    
+    // MARK: - Private Objc Properties
+    @objc private func movieSegmentControlAction(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            networkService.loadPopularMovies { [weak self] data in
+                self?.movies = data
+                DispatchQueue.main.async {
+                    self?.movieListTableView.reloadData()
+                }
+            }
+        case 1:
+            networkService.loadTopMovies { [weak self] data in
+                self?.movies = data
+                DispatchQueue.main.async {
+                    self?.movieListTableView.reloadData()
+                }
+            }
+        case 2:
+            networkService.loadUpComingMovies { [weak self] data in
+                self?.movies = data
+                DispatchQueue.main.async {
+                    self?.movieListTableView.reloadData()
+                }
+            }
+        default: break
+        }
+    }
     
     // MARK: - Private Properties
     let networkService = NetworkService()
@@ -41,7 +70,7 @@ class MovieListViewController: UIViewController {
     
     // MARK: - Private Methods
     private func loadData() {
-        networkService.loadData { [weak self] data in
+        networkService.loadPopularMovies { [weak self] data in
             self?.movies = data
             DispatchQueue.main.async {
                 self?.movieListTableView.reloadData()
@@ -96,6 +125,22 @@ private extension MovieListViewController {
     }
     
     func addConstraints() {
-        movieListTableView.frame = CGRect(x: 0, y: 100, width: 393, height: 700)
+        let views = [
+            movieListTableView,
+            movieSegmentControl
+        ]
+        views.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        
+        NSLayoutConstraint.activate([
+            movieListTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            movieListTableView.topAnchor.constraint(equalTo: movieSegmentControl.bottomAnchor),
+            movieListTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            movieListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            movieSegmentControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            movieSegmentControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            movieSegmentControl.widthAnchor.constraint(equalToConstant: 250),
+            movieSegmentControl.heightAnchor.constraint(equalToConstant: 25)
+        ])
     }
 }

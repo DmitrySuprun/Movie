@@ -16,8 +16,18 @@ class MovieDescriptionViewController: UIViewController {
     }
     
     // MARK: - Private VisualComponents
+    private let backDropImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     private let posterImageView = {
         let imageView = UIImageView()
+        imageView.layer.cornerRadius = 20
+        imageView.layer.borderWidth = 2
+        imageView.layer.borderColor = UIColor.systemRed.cgColor
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -29,45 +39,64 @@ class MovieDescriptionViewController: UIViewController {
     
     // MARK: - Public Properties
     var movie: Movie?
+    var detailInfo: DetailInfo?
+    
+    // MARK: - Private Properties
+    private var service = NetworkService()
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        loadDetailInfo()
+    }
+    
+    // MARK: - Private Methods
+    private func loadDetailInfo() {
+        service.loadDetailInfo(id: movie?.id ?? 0) { [weak self] data in
+            self?.detailInfo = data
+            self?.backDropImageView.loadImage(
+                urlName: Constants.imagePath + (self?.detailInfo?.backdropPath ?? "")
+            )
+        }
+        posterImageView.loadImage(urlName: Constants.imagePath + (movie?.posterPath ?? ""))
     }
 }
 
+// MARK: - SetupUI
 private extension MovieDescriptionViewController {
     func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(posterImageView)
+        view.addSubview(backDropImageView)
         view.addSubview(descriptionLabel)
-        posterImageView.image = UIImage(systemName: Constants.placeholderImageName)
-        posterImageView.loadImage(urlName: Constants.imagePath + (movie?.posterPath ?? ""))
+        view.addSubview(posterImageView)
+        backDropImageView.image = UIImage(systemName: Constants.placeholderImageName)
         descriptionLabel.text = movie?.overviewText
         setupConstraints()
     }
     
     func setupConstraints() {
         let views = [
-            posterImageView,
-            descriptionLabel
+            backDropImageView,
+            descriptionLabel,
+            posterImageView
         ]
         views.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-            posterImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            posterImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            posterImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            posterImageView.heightAnchor.constraint(equalToConstant: 400),
+            backDropImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            backDropImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backDropImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backDropImageView.heightAnchor.constraint(equalToConstant: 200),
             
-            descriptionLabel.topAnchor.constraint(equalTo: posterImageView.bottomAnchor, constant: 20),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            descriptionLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            posterImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            posterImageView.topAnchor.constraint(equalTo: backDropImageView.bottomAnchor, constant: 15),
+            posterImageView.widthAnchor.constraint(equalToConstant: 120),
+            posterImageView.heightAnchor.constraint(equalToConstant: 160),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: posterImageView.topAnchor),
+            descriptionLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 15),
+            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            descriptionLabel.bottomAnchor.constraint(equalTo: posterImageView.bottomAnchor, constant: 80)
         ])
-    }
-    
-    func loadMovieDescription(id: Int) {
-        
     }
 }
