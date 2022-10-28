@@ -7,12 +7,13 @@
 
 import UIKit
 
-/// Detail information about film
+/// Detail information about movie
 class MovieDescriptionViewController: UIViewController {
     // MARK: - Constants
     enum Constants {
         static let placeholderImageName = "photo"
         static let imagePath = "https://image.tmdb.org/t/p/w500"
+        static let emptyName = ""
     }
     
     // MARK: - Private VisualComponents
@@ -73,10 +74,10 @@ class MovieDescriptionViewController: UIViewController {
         service.loadDetailInfo(id: movie?.id ?? 0) { [weak self] data in
             self?.detailInfo = data
             self?.backDropImageView.loadImage(
-                urlName: Constants.imagePath + (self?.detailInfo?.backdropPath ?? "")
+                urlName: Constants.imagePath + (self?.detailInfo?.backdropPath ?? Constants.emptyName)
             )
         }
-        posterImageView.loadImage(urlName: Constants.imagePath + (movie?.posterPath ?? ""))
+        posterImageView.loadImage(urlName: Constants.imagePath + (movie?.posterPath ?? Constants.emptyName))
         ratingLabel.text = String(movie?.voteAverage ?? 0)
     }
 }

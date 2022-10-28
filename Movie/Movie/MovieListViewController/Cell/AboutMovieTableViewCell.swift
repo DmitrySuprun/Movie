@@ -13,6 +13,7 @@ final class AboutMovieTableViewCell: UITableViewCell {
     enum Constants {
         static let placeholderImageName = "photo"
         static let imagePath = "https://image.tmdb.org/t/p/w500"
+        static let coderInitError = "init(coder:) has not been implemented"
     }
     // MARK: - Private Visual Components
     private let coverMovieImageView = {
@@ -48,7 +49,7 @@ final class AboutMovieTableViewCell: UITableViewCell {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.coderInitError)
     }
     
     override func prepareForReuse() {

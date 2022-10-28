@@ -23,8 +23,8 @@ final class NetworkService {
     }
     
     func loadDetailInfo(id: Int, completion: @escaping(DetailInfo) -> ()) {
-        loadData(url: "\(Url.prefixUrl)\(id)\(Url.postfixUrl)", completion: completion)
-        print("\(Url.prefixUrl)\(id)\(Url.postfixUrl)")
+        loadData(url: "\(Url.prefixUrlName)\(id)\(Url.postfixUrlName)", completion: completion)
+        print("\(Url.prefixUrlName)\(id)\(Url.postfixUrlName)")
     }
     
     // MARK: - Private Methods

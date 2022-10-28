@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Movie request model
+/// Movie  model
 struct Movie: Decodable {
     let posterPath: String
     let overviewText: String
