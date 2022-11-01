@@ -53,6 +53,7 @@ final class AboutMovieTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         coverMovieImageView.image = UIImage(systemName: Constants.placeholderImageName)
     }
 

@@ -9,5 +9,9 @@ import Foundation
 
 /// Model List Movies
 struct Results: Decodable {
-    let results: [Movie]
+    let movies: [Movie]
+    
+    enum CodingKeys: String, CodingKey {
+        case movies = "results"
+    }
 }

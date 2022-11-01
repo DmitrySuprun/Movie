@@ -28,34 +28,6 @@ final class MovieListViewController: UIViewController {
         return tableView
     }()
     
-    // MARK: - Private Objc Properties
-    @objc private func movieSegmentControlAction(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            networkService.loadPopularMovies { [weak self] data in
-                self?.movies = data
-                DispatchQueue.main.async {
-                    self?.movieListTableView.reloadData()
-                }
-            }
-        case 1:
-            networkService.loadTopMovies { [weak self] data in
-                self?.movies = data
-                DispatchQueue.main.async {
-                    self?.movieListTableView.reloadData()
-                }
-            }
-        case 2:
-            networkService.loadUpComingMovies { [weak self] data in
-                self?.movies = data
-                DispatchQueue.main.async {
-                    self?.movieListTableView.reloadData()
-                }
-            }
-        default: break
-        }
-    }
-    
     // MARK: - Private Properties
     let networkService = NetworkService()
     var movies: Results?
@@ -68,13 +40,37 @@ final class MovieListViewController: UIViewController {
         loadData()
     }
     
+    // MARK: - Private Objc Methods
+    @objc private func movieSegmentControlAction(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            networkService.loadPopularMovies { [weak self] data in
+                self?.loadMoviesList(data: data)
+            }
+        case 1:
+            networkService.loadTopMovies { [weak self] data in
+                self?.loadMoviesList(data: data)
+
+            }
+        case 2:
+            networkService.loadUpComingMovies { [weak self] data in
+                self?.loadMoviesList(data: data)
+            }
+        default: break
+        }
+    }
+    
     // MARK: - Private Methods
     private func loadData() {
         networkService.loadPopularMovies { [weak self] data in
-            self?.movies = data
-            DispatchQueue.main.async {
-                self?.movieListTableView.reloadData()
-            }
+            self?.loadMoviesList(data: data)
+        }
+    }
+    
+    private func loadMoviesList(data: Results) {
+        movies = data
+        DispatchQueue.main.async {
+            self.movieListTableView.reloadData()
         }
     }
     
@@ -90,7 +86,7 @@ final class MovieListViewController: UIViewController {
 extension MovieListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewController = MovieDescriptionViewController()
-        viewController.movie = movies?.results[indexPath.row]
+        viewController.movie = movies?.movies[indexPath.row]
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
@@ -99,17 +95,17 @@ extension MovieListViewController: UITableViewDelegate {
 extension MovieListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let movies = movies else { return 0 }
-        return movies.results.count
+        return movies.movies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: Constants.aboutMovieCellID) as? AboutMovieTableViewCell
         else { return UITableViewCell() }
-        guard let title = movies?.results[indexPath.row].title else { return UITableViewCell() }
+        guard let title = movies?.movies[indexPath.row].title else { return UITableViewCell() }
         cell.configure(movieName: title,
-                       imageName: movies?.results[indexPath.row].posterPath ?? "",
-                       rating: movies?.results[indexPath.row].voteAverage ?? 0
+                       imageName: movies?.movies[indexPath.row].posterPath ?? "",
+                       rating: movies?.movies[indexPath.row].voteAverage ?? 0
         )
         return cell
     }

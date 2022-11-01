@@ -51,7 +51,6 @@ class MovieDescriptionViewController: UIViewController {
         label.textColor = .systemRed
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 60, weight: .bold, width: .expanded)
-        label.text = "7.4"
         return label
     }()
     
@@ -74,7 +73,7 @@ class MovieDescriptionViewController: UIViewController {
         service.loadDetailInfo(id: movie?.id ?? 0) { [weak self] data in
             self?.detailInfo = data
             self?.backDropImageView.loadImage(
-                urlName: Constants.imagePath + (self?.detailInfo?.backdropPath ?? Constants.emptyName)
+                urlName: "\(Constants.imagePath)\(self?.detailInfo?.backdropPath ?? Constants.emptyName)"
             )
         }
         posterImageView.loadImage(urlName: Constants.imagePath + (movie?.posterPath ?? Constants.emptyName))

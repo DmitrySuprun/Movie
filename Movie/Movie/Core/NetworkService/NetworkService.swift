@@ -11,20 +11,19 @@ import Foundation
 final class NetworkService {
     // MARK: - Public Methods
     func loadPopularMovies(completion: @escaping(Results) -> ()) {
-        loadData(url: Url.popularMovies, completion: completion)
+        loadData(url: MovieUrl.popularMovies, completion: completion)
     }
     
     func loadTopMovies(completion: @escaping(Results) -> ()) {
-        loadData(url: Url.topMovies, completion: completion)
+        loadData(url: MovieUrl.topMovies, completion: completion)
     }
     
     func loadUpComingMovies(completion: @escaping(Results) -> ()) {
-        loadData(url: Url.upComing, completion: completion)
+        loadData(url: MovieUrl.upComing, completion: completion)
     }
     
     func loadDetailInfo(id: Int, completion: @escaping(DetailInfo) -> ()) {
-        loadData(url: "\(Url.prefixUrlName)\(id)\(Url.postfixUrlName)", completion: completion)
-        print("\(Url.prefixUrlName)\(id)\(Url.postfixUrlName)")
+        loadData(url: "\(MovieUrl.prefixUrlName)\(id)\(MovieUrl.postfixUrlName)", completion: completion)
     }
     
     // MARK: - Private Methods
